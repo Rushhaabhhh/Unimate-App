@@ -1,6 +1,7 @@
 const User = require('../Models/UserModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 exports.registerUser = async (req, res) => {
     try {
@@ -42,7 +43,8 @@ exports.loginUser = async (req, res) => {
         res.send({ 
             message: "Login successful", 
             success: true, 
-            token: token
+            token: token,
+            userId: validUser._id
         });
     } catch (error) {
         res.status(500).json({ message: "Unable to login user", error: error.message });
@@ -59,13 +61,36 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
+    const userId = req.params.userId;
+  
     try {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        res.status(200).json(user);
+      const user = await User.findById(userId);
+  
+      if (user) {
+        res.json(user);
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
     } catch (error) {
-        res.status(500).json({ message: "Unable to retrieve user", error: error.message });
+      res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+exports.updateUser = async (req, res) => {
+    const userId = req.params.userId;
+  
+    try {
+      const user = await User.findById(userId);
+  
+      if (user) {
+        user.set(req.body);
+        await user.save();
+        res.json(user);
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+

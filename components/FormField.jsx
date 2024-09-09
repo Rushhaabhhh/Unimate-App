@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { icons } from '../constants';
 
 const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, ...props }) => {
     const [showPassword, setShowPassword] = React.useState(false);

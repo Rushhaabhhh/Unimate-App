@@ -6,6 +6,7 @@ import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
 import { Link, useRouter } from 'expo-router';
 import axios from 'axios';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,21 +15,25 @@ const Login = () => {
   const [errorVisible, setErrorVisible] = useState(false);
   const router = useRouter();
 
+  const submitDirect  = () => {
+    router.push('/Announcements');
+  }
+
   const submit = async () => {
     if (form.email === '' || form.password === '') {
       setErrorMessage('Email and password are required.');
       setErrorVisible(true);
       return;
     }
-  
+
     setIsSubmitting(true);
-  
+
     try {
       const response = await axios.post('http://localhost:8080/user/login', {
         email: form.email,
         password: form.password,
       });
-      
+
       if (response.status === 200) {
         router.push('/Profile');
       } else {
@@ -36,7 +41,7 @@ const Login = () => {
         setErrorVisible(true);
       }
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'An error occurred. Please try again.');
+      setErrorMessage(error.message);
       setErrorVisible(true);
     } finally {
       setIsSubmitting(false);
@@ -44,68 +49,90 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={styles.content}>
-            <Text style={styles.heading}>Connect, Update, Manage</Text>
-            <Text style={styles.headingText}>Connexus: Your one-stop app for news, events, and campus life.</Text>
+    <LinearGradient
+      colors={['#FFA500', '#D85401', '#1A1A1A']}
+      style={styles.gradient}
+      start={{ x: -2.7, y: -0.7 }}
+      end={{ x: 0.2, y: 0.6 }}
+    >
+      <SafeAreaView style={styles.container}>
+        <GestureHandlerRootView>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <View style={styles.content}>
+              <Text style={styles.heading}>Connect, Update, Manage</Text>
+              <Text style={styles.headingText}>
+            <Text style={styles.appName}>Unimate </Text> 
+            : Your one-stop app for news, events, and campus life.
+            </Text>
 
-            {errorVisible && <Text style={styles.errorText}>{errorMessage}</Text>}
+              {errorVisible && <Text style={styles.errorText}>{errorMessage}</Text>}
 
-            <FormField
-              value={form.email}
-              handleChangeText={(text) => setForm({ ...form, email: text })}
-              placeholder="Enter your email"
-              otherStyles={styles.input}
-              keyboardType="email-address"
-            />
+              <View style={styles.inputContainer}>
+              <FormField
+                value={form.email}
+                handleChangeText={(text) => setForm({ ...form, email: text })}
+                placeholder="Enter your email"
+                otherStyles={styles.input}
+                keyboardType="email-address"
+              />
 
-            <FormField
-              value={form.password}
-              handleChangeText={(text) => setForm({ ...form, password: text })}
-              placeholder="Enter your password"
-              otherStyles={styles.input}
-              secureTextEntry
-            />
+              <FormField
+                value={form.password}
+                handleChangeText={(text) => setForm({ ...form, password: text })}
+                placeholder="Enter your password"
+                otherStyles={styles.input}
+                secureTextEntry
+              />
+              </View>
 
-            <CustomButton
-              title="Log in"
-              handlePress={submit}
-              containerStyles={styles.button}
-              isLoading={isSubmitting}
-            />
+              <CustomButton
+                title="Log in"
+                // handlePress={submit}
+                handlePress={submitDirect}
+                containerStyles={styles.button}
+                isLoading={isSubmitting}
+              />
 
-            {isSubmitting && <ActivityIndicator size="large" color="#000" />}
+              {isSubmitting && <ActivityIndicator size="large" color="#000" />}
 
-            <Text style={styles.middleText}>Don't have an account?</Text>
-            <Link href="/register" style={styles.linkText}><Text>Sign Up</Text></Link>
-            <Link href="/" style={styles.footer}>Connexus</Link>
-          </View>
-        </ScrollView>
-      </GestureHandlerRootView>
-    </SafeAreaView>
+              <Text style={styles.middleText}>Don't have an account?</Text>
+              <Link href="/register" style={styles.linkText}>
+                <Text>Sign Up</Text>
+              </Link>
+              <Text style={styles.footer}>Unimate</Text>
+            </View>
+          </ScrollView>
+        </GestureHandlerRootView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: 'beige',
     padding: 24,
   },
   heading: {
-    fontSize: 45,
+    fontSize: 40,
     fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 10,
     textAlign: 'center',
   },
   headingText: {
-    fontSize: 25,
-    color: '#333',
+    fontSize: 22,
+    color: '#fff',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  appName: {
+    fontWeight: 'bold',
+    color: '#D85401',
   },
   scrollView: {
     flexGrow: 1,
@@ -115,10 +142,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
+  inputContainer: {
+    width: '100%',
+    textAlign: 'center',
+  },
   input: {
     height: 40,
-    width: '100%',
+    width: '80%',
     borderColor: '#ccc',
+    marginLeft: 35,
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
@@ -126,8 +158,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   button: {
-    width: '100%',
-    backgroundColor: 'black',
+    width: '80%',
+    backgroundColor: '#D85401',
     padding: 14,
     borderRadius: 8,
     marginTop: 24,
@@ -141,18 +173,20 @@ const styles = StyleSheet.create({
   },
   middleText: {
     marginTop: 20,
-    fontSize: 16,
-    color: '#333',
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
   },
   linkText: {
-    fontSize: 16,
-    color: 'black',
+    fontSize: 20,
+    marginTop: 15,
+    color: '#fff',
     textDecorationLine: 'underline',
-    marginBottom: 20,
   },
   footer: {
-    marginTop: 20,
-    fontSize: 20,
+    marginTop: 140,
+    fontSize: 65,
+    color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
   },

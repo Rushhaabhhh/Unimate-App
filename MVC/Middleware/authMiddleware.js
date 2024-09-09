@@ -11,7 +11,7 @@ const authenticateToken = (req, res, next) => {
         }
 
         const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = verifiedToken;
+        req.body.userId = verifiedToken.userId;
 
         next();
     } catch (error) {

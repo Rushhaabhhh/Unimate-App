@@ -6,9 +6,17 @@ import { Overlay } from 'react-native-elements';
 import { Link } from '@react-navigation/native';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
+import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
+import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { ImageBackground } from 'react-native';
+
+const background = require('../../assets/background.jpg');
 
 const Register = () => {
+
+  const router = useRouter();
   const [form, setForm] = useState({
     username: '',
     email: '',
@@ -17,6 +25,11 @@ const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const submitDirect = () => {
+    router.push('/Announcements');
+  }
+    
 
   const submit = async () => {
     console.log('Form:', form);
@@ -44,16 +57,27 @@ const Register = () => {
   };
 
   return (
+    // <ImageBackground
+    //   source={background} 
+    //   style={styles.background}
+    // >
+    <LinearGradient
+      colors={['#FFA500', '#D85401', '#1A1A1A']}
+      style={styles.gradient}
+      start={{ x: -2.7, y: -0.7 }}
+      end={{ x: 0.2, y: 0.6 }}
+    >
     <SafeAreaView style={styles.container}>
       <GestureHandlerRootView>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <View style={styles.content}>
             <Text style={styles.heading}>Ready! Are you?</Text>
             <Text style={styles.headingText}>
-              Connexus: Your one-stop app for news, events, and campus life.
+            <Text style={styles.appName}>Unimate </Text> 
+            : Your one-stop app for news, events, and campus life.
             </Text>
 
-        
+            <View style={styles.inputContainer}>
             <FormField
               value={form.username}
               handleChangeText={(text) => setForm({ ...form, username: text })}
@@ -74,10 +98,12 @@ const Register = () => {
               otherStyles={styles.input}
               secureTextEntry
             />
+            </View>
 
             {errorVisible && <Text style={styles.errorText}>{errorMessage}</Text>}
             <CustomButton
-              handlePress={submit}
+              // handlePress={submit}
+              handlePress={submitDirect}
               containerStyles={styles.button}
               isLoading={isSubmitting}
               title="Sign Up"
@@ -92,7 +118,7 @@ const Register = () => {
               By clicking sign up, you agree to our Terms of Service and Privacy Policy
             </Text>
 
-            <Text style={styles.footer}>Connexus</Text>
+            <Text style={styles.footer}>Unimate</Text>
           </View>
         </ScrollView>
       </GestureHandlerRootView>
@@ -101,25 +127,34 @@ const Register = () => {
         <Text>{errorMessage}</Text>
       </Overlay>
     </SafeAreaView>
+    </LinearGradient>
+    //  </ImageBackground> 
   );
 };
 
 const styles = StyleSheet.create({
+  gradient : {
+    flex : 1
+  }, 
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: 'beige',
-    padding: 24,
   },
   heading: {
-    fontSize: 45,
+    fontSize: 40,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#fff',
+    top : -15
   },
   headingText: {
-    fontSize: 25,
-    color: '#333',
+    fontSize: 22,
+    padding : 10,
+    color: '#fff',
     marginBottom: 20,
+  },
+  appName: {
+    fontWeight: 'bold',
+    color: '#D85401',
   },
   scrollView: {
     flexGrow: 1,
@@ -129,9 +164,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
+  inputContainer : {
+    width : '100%',
+    textAlign : 'center'
+  },
   input: {
     height: 40,
-    width: '150%',
+    width: '80%',
+    textAlign: 'center',
+    marginLeft : 35,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
@@ -140,8 +181,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   button: {
-    width: '100%',
-    backgroundColor: 'black',
+    width: '80%',
+    backgroundColor: '#D85401',
     padding: 14,
     borderRadius: 8,
     marginTop: 24,
@@ -150,22 +191,27 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: 'bold',
   },
   middleText: {
     marginTop: 20,
     fontSize: 16,
-    color: '#333',
+    color: '#fff',
+    textAlign: 'center',
+    padding : 10
   },
   linkText: {
-    fontSize: 16,
-    marginBottom: 20,
+    fontSize: 20,
+    marginBottom: -5,
+    marginTop: -5,
+    color: '#ffff',
     textDecorationLine: 'underline',
   },
   footer: {
-    marginTop: 20,
+    marginBottom: 20,
     fontSize: 60,
+    color: '#fff',
     fontWeight: 'bold',
   },
   errorText: {

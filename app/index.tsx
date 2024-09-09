@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { ScrollView, Text, View, StatusBar, Image, Animated, Easing } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, View, StatusBar, Animated, Easing } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import indexStyles from "../app/indexStyles";
+import { useRouter } from 'expo-router'; 
+import indexStyles from "./indexStyles";
 
-const logoImage = require('../assets/icons/newlogo1.png');
+const logoImage = require("../assets/newlogo1.png");
+
+
 
 const Page = () => {
   const [loading, setLoading] = useState(true);
+  const [navigationComplete, setNavigationComplete] = useState(false);
   const progress = new Animated.Value(0);
   const [titleAnimation] = useState(new Animated.Value(0)); 
   const [subtitleAnimation] = useState(new Animated.Value(0));
-
+  const router = useRouter(); 
   useEffect(() => {
     animateProgressBar();
     animateImage();
     animateText(); 
     const timeout = setTimeout(() => {
-      setLoading(true); 
+      setLoading(false); 
     }, 3000);
 
     return () => {
@@ -24,6 +28,13 @@ const Page = () => {
       progress.setValue(0); 
     };
   }, []);
+
+  useEffect(() => {
+    if (!loading && !navigationComplete) {
+      setNavigationComplete(true); 
+      router.push('./register');
+    }
+  }, [loading, navigationComplete]);
 
   const animateImage = () => {
     Animated.timing(progress, {
@@ -33,6 +44,7 @@ const Page = () => {
       useNativeDriver: false,
     }).start();
   }
+
   const imageStyle = {
     opacity : progress,
     transform: [
@@ -70,6 +82,7 @@ const Page = () => {
       useNativeDriver: false,
     }).start();
   };
+
   const titleStyle = {
     opacity: titleAnimation,
     transform: [
@@ -100,16 +113,13 @@ const Page = () => {
   });
 
   return (
-
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View style={indexStyles.container}>
           <View style={indexStyles.main}>
-          <Animated.Image style={[indexStyles.image, imageStyle]} source={logoImage} />
-
-          <Animated.Text style={[indexStyles.title, titleStyle]}>UNIMATE</Animated.Text>
+            <Animated.Image style={[indexStyles.image, imageStyle]} source={logoImage} />
+            <Animated.Text style={[indexStyles.title, titleStyle]}>UNIMATE</Animated.Text>
             <Animated.Text style={[indexStyles.subtitle, subtitleStyle]}>Your campus in one app!</Animated.Text>
-          
             {/* Loader */}
             {loading && (
               <View style={indexStyles.loaderContainer}>
@@ -119,7 +129,7 @@ const Page = () => {
           </View>
         </View>
       </ScrollView>
-      <StatusBar />
+      <StatusBar barStyle="light-content" />
     </SafeAreaView>
   );
 };
