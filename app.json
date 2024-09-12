@@ -1,36 +1,47 @@
 {
   "expo": {
-    "name": "ConnexusV0",
-    "slug": "ConnexusV0",
+    
+    "name": "Unimate",
+    "slug": "Unimate",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "ConnexusV0",
+    "icon": "app/assets/icon.png",
+    "scheme": "unimate",  
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "app/assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.unimate.app"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "app/assets/icon.png",  
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.unimate.app" 
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "app/assets/icon.png"  
     },
     "plugins": [
       "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7bb25fd8-b01b-4e67-bae6-538c628918b0"
+      }
     }
   }
 }
