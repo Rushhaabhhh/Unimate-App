@@ -5,9 +5,12 @@ import { ScrollView, GestureHandlerRootView } from 'react-native-gesture-handler
 import { Link, useRouter } from 'expo-router';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import FormField from '../components/FormField';
 import CustomButton from '../components/CustomButton';
+
+const url = 'https://unimate-backend.onrender.com/';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -15,10 +18,6 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [errorVisible, setErrorVisible] = useState(false);
   const router = useRouter();
-
-  const submitDirect  = () => {
-    router.push('/Announcements');
-  }
 
   const submit = async () => {
     if (form.email === '' || form.password === '') {
@@ -30,12 +29,14 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://localhost:8080/user/login', {
+      const response = await axios.post(url + 'user/login', {
         email: form.email,
         password: form.password,
       });
 
       if (response.status === 200) {
+        // Store user ID in AsyncStorage
+        await AsyncStorage.setItem('userId', response.data.userId);
         router.push('/Profile');
       } else {
         setErrorMessage('Login failed. Please try again.');
@@ -62,34 +63,33 @@ const Login = () => {
             <View style={styles.content}>
               <Text style={styles.heading}>Connect, Update, Manage</Text>
               <Text style={styles.headingText}>
-            <Text style={styles.appName}>Unimate </Text> 
-            : Your one-stop app for news, events, and campus life.
-            </Text>
+                <Text style={styles.appName}>Unimate </Text> 
+                : Your one-stop app for news, events, and campus life.
+              </Text>
 
               {errorVisible && <Text style={styles.errorText}>{errorMessage}</Text>}
 
               <View style={styles.inputContainer}>
-              <FormField
-                value={form.email}
-                handleChangeText={(text) => setForm({ ...form, email: text })}
-                placeholder="Enter your email"
-                otherStyles={styles.input}
-                keyboardType="email-address"
-              />
+                <FormField
+                  value={form.email}
+                  handleChangeText={(text) => setForm({ ...form, email: text })}
+                  placeholder="Enter your email"
+                  otherStyles={styles.input}
+                  keyboardType="email-address"
+                />
 
-              <FormField
-                value={form.password}
-                handleChangeText={(text) => setForm({ ...form, password: text })}
-                placeholder="Enter your password"
-                otherStyles={styles.input}
-                secureTextEntry
-              />
+                <FormField
+                  value={form.password}
+                  handleChangeText={(text) => setForm({ ...form, password: text })}
+                  placeholder="Enter your password"
+                  otherStyles={styles.input}
+                  secureTextEntry
+                />
               </View>
 
               <CustomButton
                 title="Log in"
-                // handlePress={submit}
-                handlePress={submitDirect}
+                handlePress={submit}
                 containerStyles={styles.button}
                 isLoading={isSubmitting}
               />
@@ -108,6 +108,7 @@ const Login = () => {
     </LinearGradient>
   );
 };
+
 
 const styles = StyleSheet.create({
   gradient: {

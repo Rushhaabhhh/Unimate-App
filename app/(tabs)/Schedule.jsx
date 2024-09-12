@@ -27,11 +27,22 @@ const Schedule = () => {
       try {
         const dayOfWeek = new Date().getDay();
         const response = await fetch(apiUrls[dayOfWeek]);
-        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const textResponse = await response.text();
+
+        if (!textResponse) {
+          throw new Error('Empty response from the server');
+        }
+
+        const data = JSON.parse(textResponse); 
         setSchedule(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching schedule:', error);
+        console.error('Error fetching schedule:', error.message);
         setLoading(false);
       }
     };
@@ -63,10 +74,21 @@ const Schedule = () => {
   const fetchScheduleForDay = async (dayOfWeek) => {
     try {
       const response = await fetch(apiUrls[dayOfWeek]);
-      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const textResponse = await response.text();
+
+      if (!textResponse) {
+        throw new Error('Empty response from the server');
+      }
+
+      const data = JSON.parse(textResponse);
       setSchedule(data);
     } catch (error) {
-      console.error('Error fetching schedule:', error);
+      console.error('Error fetching schedule:', error.message);
     }
   };
 

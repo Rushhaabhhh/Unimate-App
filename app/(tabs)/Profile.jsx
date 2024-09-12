@@ -3,38 +3,46 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, Tex
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const url = "https://unimate-backend.onrender.com/";
 
 const Profile = () => {
   const [userData, setUserData] = useState({
-    name: 'Ethan Blake',
-    username: 'ethanWizard',
-    email: 'ethan78@gmail.com',
-    bio: 'Sophomore at Scaler School of Technology. Currently crafting an mobile app that leverages AI for personalized learning experiences. A keen eye for emerging tech and a love for problem-solving,',
-    profileImage: 'https://avatarfiles.alphacoders.com/207/thumb-1920-207641.jpg' 
+    name: '',
+    username: '',
+    email: '',
+    bio: '',
+    profileImage: '' 
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [imageUri, setImageUri] = useState(null);
+  const [userId, setUserId] = useState(null); // State to store userId
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    fetchUserId(); // Fetch userId on mount
+    fetchUserData(); // Fetch user data
+  }, [userId]); // Add userId as dependency to re-fetch data if userId changes
+
+  const fetchUserId = async () => {
+    try {
+      const id = await AsyncStorage.getItem('userId'); // Retrieve userId
+      if (id) {
+        setUserId(id);
+      }
+    } catch (error) {
+      console.error('Error fetching userId:', error);
+    }
+  };
 
   const fetchUserData = async () => {
-    try {
-      // Uncomment this when you're ready to fetch from the backend
-      // const response = await axios.get('http://localhost:8080//user/profile');
-      // setUserData(response.data);
+    if (!userId) return;
 
-      // For now, we'll use dummy data
-      setUserData({
-        name: 'Ethan Blake',
-    username: 'ethanWizard',
-    email: 'ethan78@gmail.com',
-    bio: 'Sophomore at Scaler School of Technology. Currently crafting an mobile app that leverages AI for personalized learning experiences. A keen eye for emerging tech and a love for problem-solving,',
-    profileImage: 'https://img.freepik.com/premium-photo/close-up-man-cartoon-character-smiling_1086710-10977.jpg?ga=GA1.1.1013454858.1723968449&semt=ais_hybrid' 
-      });
+    try {
+      const response = await axios.get(`${url}user/${userId}`); // Fetch user data using userId
+      setUserData(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
       // Alert.alert('Error', 'Failed to load user data');
@@ -42,11 +50,12 @@ const Profile = () => {
   };
 
   const updateUserData = async () => {
+    if (!userId) return;
+
     try {
-      // Uncomment this when you're ready to update to the backend
-      // const response = await axios.get('http://localhost:8080//user/profile', { ...editedData, profileImage: imageUri });
-      
-      // For now, we'll just update the local state
+      const updateUrl = `${url}user/${userId}`;
+      await axios.put(updateUrl, { ...editedData, profileImage: imageUri });
+
       setUserData({ ...userData, ...editedData, profileImage: imageUri });
       setIsEditing(false);
       Alert.alert('Success', 'Profile updated successfully');
@@ -104,8 +113,8 @@ const Profile = () => {
             marking your digital footprint with <Text style={styles.highlight}>{userData.email}</Text>
           </Text>
           <View style={styles.divider}>
-          <Text style={styles.bioTitle}>Legend's Spotlight:</Text>
-          <Text style={styles.bioText}>{userData.bio}</Text>
+            <Text style={styles.bioTitle}>Legend's Spotlight:</Text>
+            <Text style={styles.bioText}>{userData.bio}</Text>
           </View>
         </View>
 
@@ -122,41 +131,39 @@ const Profile = () => {
       >
         <View style={styles.modalView}>
           <Text style={styles.modalTitle}>Edit Profile</Text>
-          <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
-            <Text style={styles.imagePickerText}>Pick an Image</Text>
+          <TouchableOpacity style={styles.pickImageButton} onPress={pickImage}>
+            <Text style={styles.pickImageText}>Pick an image</Text>
           </TouchableOpacity>
-          {imageUri && <Image source={{ uri: imageUri }} style={styles.modalProfileImage} />}
           <TextInput
-            style={[styles.input, styles.modalInput]}
+            style={styles.input}
+            placeholder="Name"
             value={editedData.name}
             onChangeText={(text) => setEditedData({ ...editedData, name: text })}
-            placeholder="Name"
           />
           <TextInput
-            style={[styles.input, styles.modalInput]}
+            style={styles.input}
+            placeholder="Username"
             value={editedData.username}
             onChangeText={(text) => setEditedData({ ...editedData, username: text })}
-            placeholder="Username"
           />
           <TextInput
-            style={[styles.input, styles.modalInput]}
+            style={styles.input}
+            placeholder="Email"
             value={editedData.email}
             onChangeText={(text) => setEditedData({ ...editedData, email: text })}
-            placeholder="Email"
-            keyboardType="email-address"
           />
           <TextInput
-            style={[styles.input, styles.modalBioInput]}
+            style={styles.input}
+            placeholder="Bio"
             value={editedData.bio}
             onChangeText={(text) => setEditedData({ ...editedData, bio: text })}
-            placeholder="Bio"
             multiline
           />
-          <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={updateUserData}>
-            <Text style={styles.buttonText}>Save Changes</Text>
+          <TouchableOpacity style={styles.saveButton} onPress={updateUserData}>
+            <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setIsEditing(false)}>
-            <Text style={styles.buttonText}>Cancel</Text>
+          <TouchableOpacity style={styles.cancelButton} onPress={() => setIsEditing(false)}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </Modal>

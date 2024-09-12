@@ -10,9 +10,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 
+const url = 'https://unimate-backend.onrender.com/';
 
 const Register = () => {
-
   const router = useRouter();
   const [form, setForm] = useState({
     username: '',
@@ -23,24 +23,20 @@ const Register = () => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const submitDirect = () => {
-    router.push('/Announcements');
-  }
-    
-
   const submit = async () => {
     console.log('Form:', form);
 
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://localhost:8080/user/register', {
+      const response = await axios.post(url + 'user/register', {
         email: form.email,
         username: form.username,
         password: form.password,
       });
+
       if (response.status === 201) {
-        router.push('/Profile');
+        router.push('/Profile'); // Redirect to Profile page after successful registration
       } else {
         setErrorMessage('Registration failed. Please try again.');
         setErrorVisible(true);
@@ -54,78 +50,72 @@ const Register = () => {
   };
 
   return (
-    // <ImageBackground
-    //   source={background} 
-    //   style={styles.background}
-    // >
     <LinearGradient
       colors={['#FFA500', '#D85401', '#1A1A1A']}
       style={styles.gradient}
       start={{ x: -2.7, y: -0.7 }}
       end={{ x: 0.2, y: 0.6 }}
     >
-    <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={styles.content}>
-            <Text style={styles.heading}>Ready! Are you?</Text>
-            <Text style={styles.headingText}>
-            <Text style={styles.appName}>Unimate </Text> 
-            : Your one-stop app for news, events, and campus life.
-            </Text>
+      <SafeAreaView style={styles.container}>
+        <GestureHandlerRootView>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <View style={styles.content}>
+              <Text style={styles.heading}>Ready! Are you?</Text>
+              <Text style={styles.headingText}>
+                <Text style={styles.appName}>Unimate </Text>
+                : Your one-stop app for news, events, and campus life.
+              </Text>
 
-            <View style={styles.inputContainer}>
-            <FormField
-              value={form.username}
-              handleChangeText={(text) => setForm({ ...form, username: text })}
-              placeholder="Enter your username"
-              otherStyles={styles.input}
-            />
-            <FormField
-              value={form.email}
-              handleChangeText={(text) => setForm({ ...form, email: text })}
-              placeholder="Enter your email"
-              otherStyles={styles.input}
-              keyboardType="email-address"
-            />
-            <FormField
-              value={form.password}
-              handleChangeText={(text) => setForm({ ...form, password: text })}
-              placeholder="Enter your password"
-              otherStyles={styles.input}
-              secureTextEntry
-            />
+              <View style={styles.inputContainer}>
+                <FormField
+                  value={form.username}
+                  handleChangeText={(text) => setForm({ ...form, username: text })}
+                  placeholder="Enter your username"
+                  otherStyles={styles.input}
+                />
+                <FormField
+                  value={form.email}
+                  handleChangeText={(text) => setForm({ ...form, email: text })}
+                  placeholder="Enter your email"
+                  otherStyles={styles.input}
+                  keyboardType="email-address"
+                />
+                <FormField
+                  value={form.password}
+                  handleChangeText={(text) => setForm({ ...form, password: text })}
+                  placeholder="Enter your password"
+                  otherStyles={styles.input}
+                  secureTextEntry
+                />
+              </View>
+
+              {errorVisible && <Text style={styles.errorText}>{errorMessage}</Text>}
+              <CustomButton
+                handlePress={submit}
+                containerStyles={styles.button}
+                isLoading={isSubmitting}
+                title="Sign Up"
+              />
+
+              <Text style={styles.middleText}>Already have an account?</Text>
+              <Link to="/login" style={styles.linkText}>
+                <Text>Log In</Text>
+              </Link>
+
+              <Text style={styles.middleText}>
+                By clicking sign up, you agree to our Terms of Service and Privacy Policy
+              </Text>
+
+              <Text style={styles.footer}>Unimate</Text>
             </View>
+          </ScrollView>
+        </GestureHandlerRootView>
 
-            {errorVisible && <Text style={styles.errorText}>{errorMessage}</Text>}
-            <CustomButton
-              // handlePress={submit}
-              handlePress={submitDirect}
-              containerStyles={styles.button}
-              isLoading={isSubmitting}
-              title="Sign Up"
-            />
-
-            <Text style={styles.middleText}>Already have an account?</Text>
-            <Link to="/login" style={styles.linkText}>
-              <Text>Log In</Text>
-            </Link>
-
-            <Text style={styles.middleText}>
-              By clicking sign up, you agree to our Terms of Service and Privacy Policy
-            </Text>
-
-            <Text style={styles.footer}>Unimate</Text>
-          </View>
-        </ScrollView>
-      </GestureHandlerRootView>
-
-      <Overlay isVisible={errorVisible} onBackdropPress={() => setErrorVisible(false)}>
-        <Text>{errorMessage}</Text>
-      </Overlay>
-    </SafeAreaView>
+        <Overlay isVisible={errorVisible} onBackdropPress={() => setErrorVisible(false)}>
+          <Text>{errorMessage}</Text>
+        </Overlay>
+      </SafeAreaView>
     </LinearGradient>
-    //  </ImageBackground> 
   );
 };
 
