@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, GestureHandlerRootView } from 'react-native-gesture-handler';
-import FormField from '../../components/FormField';
-import CustomButton from '../../components/CustomButton';
 import { Link, useRouter } from 'expo-router';
 import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
+
+import FormField from '../components/FormField';
+import CustomButton from '../components/CustomButton';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });

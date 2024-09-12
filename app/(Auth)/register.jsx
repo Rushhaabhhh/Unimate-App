@@ -4,15 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Overlay } from 'react-native-elements';
 import { Link } from '@react-navigation/native';
-import FormField from '../../components/FormField';
-import CustomButton from '../../components/CustomButton';
+import FormField from '../components/FormField';
+import CustomButton from '../components/CustomButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
-import { router } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { ImageBackground } from 'react-native';
 
-const background = require('../../assets/background.jpg');
 
 const Register = () => {
 

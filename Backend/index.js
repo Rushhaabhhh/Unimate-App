@@ -30,14 +30,12 @@ mongoose.connect(process.env.MONGO_URL, {
 // Routes
 const UserRoute = require('./Routes/UserRoute');
 const AnnouncementRoute = require('./Routes/AnnouncementRoute');
-const ProfileRoute = require('./Routes/ProfileRoute');
 
 app.use('/user', UserRoute);
-app.use('/profile', ProfileRoute);
 app.use('/announcement', AnnouncementRoute);
 
 // Error Handling Middleware
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });

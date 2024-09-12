@@ -61,36 +61,59 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-    const userId = req.params.userId;
-  
-    try {
+  const userId = req.params.userId;
+
+  // Validate the userId format
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
+  }
+
+  try {
       const user = await User.findById(userId);
-  
+
       if (user) {
-        res.json(user);
+          res.status(200).json(user);
       } else {
-        res.status(404).json({ message: 'User not found' });
+          res.status(404).json({ message: 'User not found' });
       }
-    } catch (error) {
+  } catch (error) {
+      console.error(error); // Log error for debugging
       res.status(500).json({ message: 'Server error', error: error.message });
-    }
+  }
 };
 
 exports.updateUser = async (req, res) => {
-    const userId = req.params.userId;
-  
-    try {
-      const user = await User.findById(userId);
-  
-      if (user) {
-        user.set(req.body);
-        await user.save();
-        res.json(user);
+  const userId = req.params.userId;
+
+  try {
+      const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true, runValidators: true });
+
+      if (updatedUser) {
+          res.json(updatedUser);
       } else {
-        res.status(404).json({ message: 'User not found' });
+          res.status(404).json({ message: 'User not found' });
       }
-    } catch (error) {
+  } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
-    }
+  }
 };
+
+exports.patchUser = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+      const user = await User.findById(userId);
+
+      if (user) {
+          user.set(req.body); // Set only the fields provided in the request body
+          await user.save();
+          res.json(user);
+      } else {
+          res.status(404).json({ message: 'User not found' });
+      }
+  } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 

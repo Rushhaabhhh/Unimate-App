@@ -4,8 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from 'expo-router'; 
 import indexStyles from "./indexStyles";
 
-const logoImage = require("../assets/newlogo1.png");
-
+const logoImage = require("../app/assets/newlogo1.png");
 
 
 const Page = () => {
